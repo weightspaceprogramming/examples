@@ -7,6 +7,7 @@ prompt execute locally. --offline requires previously downloaded model assets.
 """
 import argparse
 from datetime import datetime, timezone
+from email.utils import parsedate_to_datetime
 import json
 from pathlib import Path
 import time
@@ -20,17 +21,27 @@ SPEC = (
     "blocker is URGENT. Newsletters, completed work, and FYI updates are ROUTINE."
 )
 DEADLINE_SPEC = (
-    "Classify whether this email asks its recipient to act by an explicit "
-    "deadline today. Return exactly URGENT or ROUTINE. A request with an "
-    "explicit deadline today is URGENT. Requests without that deadline, "
-    "including blocked work, are ROUTINE. Completed work and FYI updates "
-    "are ROUTINE."
+    'Decide whether the recipient must act by an explicitly stated deadline today. '
+    'Return exactly URGENT or ROUTINE. Return URGENT only if the email gives a '
+    'deadline today, such as a clock time today or the end of today. Words such as '
+    'now, urgently, immediately, or ASAP do not state a deadline today: return '
+    'ROUTINE for those requests unless a deadline today is also stated. Blocked '
+    'work without an explicit deadline today, completed work, newsletters, and FYI '
+    'updates are ROUTINE.'
 )
 ROUTER_SPEC = (
-    "Classify the destination for this email. Return exactly ACADEMIC, "
-    "OPERATIONS, or OTHER. Submissions, seminars, teaching, and research "
-    "administration are ACADEMIC. Software releases, service failures, "
-    "and infrastructure are OPERATIONS. Everything else is OTHER."
+    'Classify the topic of this email. Return exactly ACADEMIC, OPERATIONS, or '
+    'OTHER. ACADEMIC includes all messages about submissions, submission approvals, '
+    'submission access, seminars, teaching, classes, research, and university '
+    'administration. A submission or seminar belongs to ACADEMIC even when no paper '
+    'or university is named. OPERATIONS includes all messages about software '
+    'releases, release approvals, deployments, servers, service failures, and '
+    'computing infrastructure. A release belongs to OPERATIONS even when software '
+    'is not mentioned. OTHER includes unrelated topics such as meals, travel, '
+    'shopping, and social plans. Classify by topic, regardless of urgency. '
+    'Examples: "Is the submission form ready?" -> ACADEMIC; "The lecture room has '
+    'changed." -> ACADEMIC; "The deployment needs a sign-off." -> OPERATIONS; "Our '
+    'server crashed." -> OPERATIONS; "Shall we go hiking?" -> OTHER.'
 )
 CASES = [
     ("Please approve the submission by 5 p.m. today so we can meet the deadline.", "URGENT"),
@@ -53,6 +64,37 @@ def emit(value):
     print(json.dumps(value, ensure_ascii=False))
 
 
+def download_program(program_id, output_path, timeout=120):
+    """Wait for an artifact, then save it without replacing an existing file."""
+    url = "https://programasweights.com/api/v1/programs/" + quote(program_id, safe="") + "/download"
+    deadline = time.monotonic() + timeout
+    while True:
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            raise TimeoutError(f"Program artifact was not ready within {timeout} seconds.")
+        with urlopen(url, timeout=remaining) as response:
+            if response.status != 202:
+                payload = response.read()
+                break
+            retry_after = response.headers.get("Retry-After", "3")
+        try:
+            delay = float(retry_after)
+        except ValueError:
+            try:
+                ready_at = parsedate_to_datetime(retry_after)
+                if ready_at.tzinfo is None:
+                    ready_at = ready_at.replace(tzinfo=timezone.utc)
+                delay = (ready_at - datetime.now(timezone.utc)).total_seconds()
+            except (TypeError, ValueError, OverflowError):
+                delay = 3
+        remaining = deadline - time.monotonic()
+        if remaining > 0:
+            time.sleep(min(max(1, delay), remaining))
+    with output_path.open("xb") as output:
+        output.write(payload)
+    return len(payload)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
@@ -63,6 +105,7 @@ def main():
     run_parser = commands.add_parser("run", help="Print actual local outputs next to expected labels")
     run_parser.add_argument("reference", help="Saved JSON, program ID, or local .paw path")
     run_parser.add_argument("--offline", action="store_true")
+    run_parser.add_argument("--policy", choices=["original", "deadline"], help="Expected-label policy; overrides saved JSON metadata")
     run_parser.add_argument("--input", help="Test one new email instead of the five examples")
     prompt_parser = commands.add_parser("prompt", help="Run the same task by prompting the unadapted local interpreter")
     prompt_parser.add_argument("--offline", action="store_true")
@@ -84,14 +127,8 @@ def main():
         if args.output.exists():
             parser.error("The output exists; choose a new filename.")
         program_id, _ = reference(args.reference)
-        url = "https://programasweights.com/api/v1/programs/" + quote(program_id, safe="") + "/download"
-        with urlopen(url, timeout=120) as response:
-            if response.status == 202:
-                parser.error("The artifact is still being prepared. Retry after " + response.headers.get("Retry-After", "a few") + " seconds.")
-            payload = response.read()
-        with args.output.open("xb") as output:
-            output.write(payload)
-        emit({"program_id": program_id, "saved_file": str(args.output), "bytes": len(payload)})
+        size = download_program(program_id, args.output)
+        emit({"program_id": program_id, "saved_file": str(args.output), "bytes": size})
         return
 
     import programasweights as paw
@@ -148,10 +185,15 @@ def main():
         program_id, metadata = reference(args.reference)
         if metadata.get("kind", "urgency") != "urgency":
             parser.error("Use an urgency program for these test cases.")
-        policy = metadata.get("policy", "original")
+        policy = args.policy or metadata.get("policy")
+        if policy is not None and policy not in {"original", "deadline"}:
+            parser.error("Saved policy must be original or deadline; use --policy to select it.")
+        if args.input is None and policy is None:
+            parser.error("Built-in test cases require --policy original or --policy deadline when the reference has no saved policy.")
         fn = paw.function(program_id, offline=args.offline)
     emit({"mode": args.command, "program": program_id, "load_seconds": time.perf_counter() - started})
     cases = [(args.input, None)] if args.input is not None else CASES
+    results = []
     try:
         for email, expected in cases:
             if expected is not None and policy == "deadline":
@@ -162,12 +204,23 @@ def main():
                 model_input = spec + "\n\nEmail:\n" + email + "\n\nLabel:"
             started = time.perf_counter()
             actual = fn(model_input).strip()
-            emit({"input": email, "expected_label": expected, "actual_output": actual,
-                  "valid_label": actual in {"URGENT", "ROUTINE"},
-                  "matches_expected": actual == expected if expected is not None else None,
-                  "call_seconds": time.perf_counter() - started})
+            result = {"input": email, "expected_label": expected, "actual_output": actual,
+                      "valid_label": actual in {"URGENT", "ROUTINE"},
+                      "matches_expected": actual == expected if expected is not None else None,
+                      "call_seconds": time.perf_counter() - started}
+            results.append(result)
+            emit(result)
     finally:
         fn.close()
+    invalid = sum(not result["valid_label"] for result in results)
+    mismatches = sum(result["matches_expected"] is False for result in results)
+    emit({"summary": True, "cases": len(results), "policy": policy,
+          "checked_cases": sum(result["expected_label"] is not None for result in results),
+          "matches": sum(result["matches_expected"] is True for result in results),
+          "mismatches": mismatches, "invalid_labels": invalid,
+          "passed": invalid == 0 and mismatches == 0})
+    if invalid or mismatches:
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":

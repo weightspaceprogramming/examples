@@ -50,7 +50,7 @@ python paw_email_urgency.py run urgency-program.json
 
 Compilation sends the specification to the PAW service. The SDK downloads the resulting program and its shared interpreter on first use, then executes inputs locally. The JSON record preserves the specification, program ID, and compiler snapshot.
 
-The five test emails include a quoted urgent request that has already been resolved and a blocked submission without the word “urgent.” Each result reports the actual output, expected label, label validity, and whether it matches. The expected labels define the test; the script obtains predictions from the model.
+The five test emails include a quoted urgent request that has already been resolved and a blocked submission without the word “urgent.” Each result reports the actual output, expected label, label validity, and whether it matches. The expected labels define the test; the script obtains predictions from the model. It prints a summary and exits with a nonzero status if any label is invalid or differs from the expectation. A custom input checks label validity without assigning an expected answer.
 
 Run another email through the same program:
 
@@ -70,8 +70,10 @@ Download the program as a portable file:
 
 ```sh
 python paw_email_urgency.py download urgency-program.json --output urgency.paw
-python paw_email_urgency.py run ./urgency.paw
+python paw_email_urgency.py run ./urgency.paw --policy original
 ```
+
+When running the five test cases from a `.paw` file or bare program ID, pass `--policy original` or `--policy deadline`. Saved JSON records supply their policy automatically; `--policy` overrides it. The download command waits up to 120 seconds while the service prepares the artifact and preserves any existing output file.
 
 [Try the playground](https://programasweights.com/playground) · [Complete walkthrough](https://weightspaceprogramming.tech/build/reusable-neural-function/) · [SDK reference](https://programasweights.readthedocs.io/en/latest/api-reference/python-sdk/) · [Local compiler](https://github.com/programasweights/compiler) · [PAW paper](https://arxiv.org/abs/2607.02512)
 
@@ -87,7 +89,7 @@ python paw_email_urgency.py compose urgency-program.json router-program.json \
 
 The script checks each label before using it. The neural functions make the semantic judgments; ordinary Python maps their outputs to destination and priority fields. It prints the decision without sending an email or changing a queue.
 
-Change the urgency policy to require an explicit deadline today, then compare the new function with the original:
+Change the urgency policy to require an explicit deadline today, then compare the new function with the original. “Now,” “immediately,” and “ASAP” do not state a deadline today:
 
 ```sh
 python paw_email_urgency.py compile --policy deadline --output deadline-program.json
@@ -105,3 +107,9 @@ The prompt command supplies the policy on each call. Record the actual outputs a
 ## Contributing an example
 
 Include the source, installation commands, representative inputs, expected behavior, and the command that checks the result. Link the original paper and implementation. For model-generated outputs, report the model or compiler version and keep predictions separate from expected answers.
+
+Check the script’s validation and download behavior without model calls:
+
+```sh
+python -m unittest test_paw_email_urgency.py
+```
