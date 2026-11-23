@@ -1,8 +1,15 @@
 # Weight-Space Programming Examples
 
-Run a formal program compiled into transformer weights, then build reusable neural functions from English specifications.
+Runnable weight-space programming code: compile reusable neural functions with PAW, compile exact programs with Tracr, and inspect input-layer weights from Sparks.
 
 These examples accompany the [Weight-Space Programming guide](https://weightspaceprogramming.tech/). Read [how the approaches compare](https://weightspaceprogramming.tech/learn/comparing-methods/) or browse the [papers, code, and models](https://weightspaceprogramming.tech/research/).
+
+## Choose an example
+
+- [PAW neural functions](#2-compile-and-reuse-an-email-urgency-function-with-paw): compile an English specification into a LoRA adapter, then run urgency and routing functions on new inputs.
+- [PAW and prompting](#email-triage-and-request-routing): compare actual outputs from the same Qwen3-0.6B interpreter.
+- [Tracr token counter](#1-compile-a-token-counter-with-tracr): compile RASP into transformer weights and check exact counts on CPU.
+- [Sparks weight-reading heatmaps](WEIGHT_READING.md): inspect four released policy networks and reproduce the input-layer norm calculation discussed by Sean Goedecke.
 
 ## 1. Compile a token counter with Tracr
 
