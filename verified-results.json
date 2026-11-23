@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "recorded_date": "2026-11-22",
   "timezone": "America/Toronto",
   "verified_at_utc": "2026-11-23T03:57:31.220268+00:00",
@@ -48,31 +48,36 @@
       "input": "Please approve the submission by 5 p.m. today so we can meet the deadline.",
       "expected": "URGENT",
       "paw_output": "URGENT",
-      "prompt_output": "URGENT"
+      "prompt_output": "URGENT",
+      "baseline_input": "Classify whether this email needs prompt action from its recipient. Return exactly URGENT or ROUTINE. An imminent deadline or an immediate blocker is URGENT. Newsletters, completed work, and FYI updates are ROUTINE.\n\nEmail:\nPlease approve the submission by 5 p.m. today so we can meet the deadline.\n\nLabel:"
     },
     {
       "input": "Here is next month's seminar schedule for your information.",
       "expected": "ROUTINE",
       "paw_output": "ROUTINE",
-      "prompt_output": "ROUTINE"
+      "prompt_output": "ROUTINE",
+      "baseline_input": "Classify whether this email needs prompt action from its recipient. Return exactly URGENT or ROUTINE. An imminent deadline or an immediate blocker is URGENT. Newsletters, completed work, and FYI updates are ROUTINE.\n\nEmail:\nHere is next month's seminar schedule for your information.\n\nLabel:"
     },
     {
       "input": "The release is waiting on your approval. Please unblock it now.",
       "expected": "URGENT",
       "paw_output": "URGENT",
-      "prompt_output": "URGENT"
+      "prompt_output": "URGENT",
+      "baseline_input": "Classify whether this email needs prompt action from its recipient. Return exactly URGENT or ROUTINE. An imminent deadline or an immediate blocker is URGENT. Newsletters, completed work, and FYI updates are ROUTINE.\n\nEmail:\nThe release is waiting on your approval. Please unblock it now.\n\nLabel:"
     },
     {
       "input": "Forwarding the earlier ‘URGENT: signature needed’ email for the record. This was resolved yesterday.",
       "expected": "ROUTINE",
       "paw_output": "ROUTINE",
-      "prompt_output": "ROUTINE"
+      "prompt_output": "ROUTINE",
+      "baseline_input": "Classify whether this email needs prompt action from its recipient. Return exactly URGENT or ROUTINE. An imminent deadline or an immediate blocker is URGENT. Newsletters, completed work, and FYI updates are ROUTINE.\n\nEmail:\nForwarding the earlier ‘URGENT: signature needed’ email for the record. This was resolved yesterday.\n\nLabel:"
     },
     {
       "input": "The submission is ready, but the team cannot send it until you grant access.",
       "expected": "URGENT",
       "paw_output": "URGENT",
-      "prompt_output": "URGENT"
+      "prompt_output": "URGENT",
+      "baseline_input": "Classify whether this email needs prompt action from its recipient. Return exactly URGENT or ROUTINE. An imminent deadline or an immediate blocker is URGENT. Newsletters, completed work, and FYI updates are ROUTINE.\n\nEmail:\nThe submission is ready, but the team cannot send it until you grant access.\n\nLabel:"
     }
   ],
   "deadline_policy": [
@@ -80,95 +85,124 @@
       "input": "Please approve the submission by 5 p.m. today so we can meet the deadline.",
       "expected": "URGENT",
       "paw_output": "URGENT",
-      "prompt_output": "URGENT"
+      "prompt_output": "URGENT",
+      "baseline_input": "Decide whether the recipient must act by an explicitly stated deadline today. Return exactly URGENT or ROUTINE. Return URGENT only if the email gives a deadline today, such as a clock time today or the end of today. Words such as now, urgently, immediately, or ASAP do not state a deadline today: return ROUTINE for those requests unless a deadline today is also stated. Blocked work without an explicit deadline today, completed work, newsletters, and FYI updates are ROUTINE.\n\nEmail:\nPlease approve the submission by 5 p.m. today so we can meet the deadline.\n\nLabel:"
     },
     {
       "input": "Here is next month's seminar schedule for your information.",
       "expected": "ROUTINE",
       "paw_output": "ROUTINE",
-      "prompt_output": "ROUTINE"
+      "prompt_output": "ROUTINE",
+      "baseline_input": "Decide whether the recipient must act by an explicitly stated deadline today. Return exactly URGENT or ROUTINE. Return URGENT only if the email gives a deadline today, such as a clock time today or the end of today. Words such as now, urgently, immediately, or ASAP do not state a deadline today: return ROUTINE for those requests unless a deadline today is also stated. Blocked work without an explicit deadline today, completed work, newsletters, and FYI updates are ROUTINE.\n\nEmail:\nHere is next month's seminar schedule for your information.\n\nLabel:"
     },
     {
       "input": "The release is waiting on your approval. Please unblock it now.",
       "expected": "ROUTINE",
       "paw_output": "ROUTINE",
-      "prompt_output": "URGENT"
+      "prompt_output": "URGENT",
+      "baseline_input": "Decide whether the recipient must act by an explicitly stated deadline today. Return exactly URGENT or ROUTINE. Return URGENT only if the email gives a deadline today, such as a clock time today or the end of today. Words such as now, urgently, immediately, or ASAP do not state a deadline today: return ROUTINE for those requests unless a deadline today is also stated. Blocked work without an explicit deadline today, completed work, newsletters, and FYI updates are ROUTINE.\n\nEmail:\nThe release is waiting on your approval. Please unblock it now.\n\nLabel:"
     },
     {
       "input": "Forwarding the earlier ‘URGENT: signature needed’ email for the record. This was resolved yesterday.",
       "expected": "ROUTINE",
       "paw_output": "ROUTINE",
-      "prompt_output": "ROUTINE"
+      "prompt_output": "ROUTINE",
+      "baseline_input": "Decide whether the recipient must act by an explicitly stated deadline today. Return exactly URGENT or ROUTINE. Return URGENT only if the email gives a deadline today, such as a clock time today or the end of today. Words such as now, urgently, immediately, or ASAP do not state a deadline today: return ROUTINE for those requests unless a deadline today is also stated. Blocked work without an explicit deadline today, completed work, newsletters, and FYI updates are ROUTINE.\n\nEmail:\nForwarding the earlier ‘URGENT: signature needed’ email for the record. This was resolved yesterday.\n\nLabel:"
     },
     {
       "input": "The submission is ready, but the team cannot send it until you grant access.",
       "expected": "ROUTINE",
       "paw_output": "ROUTINE",
-      "prompt_output": "ROUTINE"
+      "prompt_output": "ROUTINE",
+      "baseline_input": "Decide whether the recipient must act by an explicitly stated deadline today. Return exactly URGENT or ROUTINE. Return URGENT only if the email gives a deadline today, such as a clock time today or the end of today. Words such as now, urgently, immediately, or ASAP do not state a deadline today: return ROUTINE for those requests unless a deadline today is also stated. Blocked work without an explicit deadline today, completed work, newsletters, and FYI updates are ROUTINE.\n\nEmail:\nThe submission is ready, but the team cannot send it until you grant access.\n\nLabel:"
     }
   ],
   "additional_deadline_checks": [
     {
       "input": "Please send your comments by noon today.",
       "expected": "URGENT",
-      "actual": "URGENT"
+      "actual": "URGENT",
+      "prompt_output": "ROUTINE",
+      "baseline_input": "Decide whether the recipient must act by an explicitly stated deadline today. Return exactly URGENT or ROUTINE. Return URGENT only if the email gives a deadline today, such as a clock time today or the end of today. Words such as now, urgently, immediately, or ASAP do not state a deadline today: return ROUTINE for those requests unless a deadline today is also stated. Blocked work without an explicit deadline today, completed work, newsletters, and FYI updates are ROUTINE.\n\nEmail:\nPlease send your comments by noon today.\n\nLabel:"
     },
     {
       "input": "The build is broken. Fix it immediately.",
       "expected": "ROUTINE",
-      "actual": "ROUTINE"
+      "actual": "ROUTINE",
+      "prompt_output": "URGENT",
+      "baseline_input": "Decide whether the recipient must act by an explicitly stated deadline today. Return exactly URGENT or ROUTINE. Return URGENT only if the email gives a deadline today, such as a clock time today or the end of today. Words such as now, urgently, immediately, or ASAP do not state a deadline today: return ROUTINE for those requests unless a deadline today is also stated. Blocked work without an explicit deadline today, completed work, newsletters, and FYI updates are ROUTINE.\n\nEmail:\nThe build is broken. Fix it immediately.\n\nLabel:"
     },
     {
       "input": "Approve the budget by 9 a.m. tomorrow.",
       "expected": "ROUTINE",
-      "actual": "ROUTINE"
+      "actual": "ROUTINE",
+      "prompt_output": "URGENT",
+      "baseline_input": "Decide whether the recipient must act by an explicitly stated deadline today. Return exactly URGENT or ROUTINE. Return URGENT only if the email gives a deadline today, such as a clock time today or the end of today. Words such as now, urgently, immediately, or ASAP do not state a deadline today: return ROUTINE for those requests unless a deadline today is also stated. Blocked work without an explicit deadline today, completed work, newsletters, and FYI updates are ROUTINE.\n\nEmail:\nApprove the budget by 9 a.m. tomorrow.\n\nLabel:"
     }
   ],
   "routing": [
     {
       "input": "The release is waiting on your approval. Please unblock it now.",
       "expected": "OPERATIONS",
-      "actual": "OPERATIONS"
+      "actual": "OPERATIONS",
+      "prompt_output": "OPERATIONS",
+      "baseline_input": "Classify the topic of this email. Return exactly ACADEMIC, OPERATIONS, or OTHER. ACADEMIC includes all messages about submissions, submission approvals, submission access, seminars, teaching, classes, research, and university administration. A submission or seminar belongs to ACADEMIC even when no paper or university is named. OPERATIONS includes all messages about software releases, release approvals, deployments, servers, service failures, and computing infrastructure. A release belongs to OPERATIONS even when software is not mentioned. OTHER includes unrelated topics such as meals, travel, shopping, and social plans. Classify by topic, regardless of urgency. Examples: \"Is the submission form ready?\" -> ACADEMIC; \"The lecture room has changed.\" -> ACADEMIC; \"The deployment needs a sign-off.\" -> OPERATIONS; \"Our server crashed.\" -> OPERATIONS; \"Shall we go hiking?\" -> OTHER.\n\nEmail:\nThe release is waiting on your approval. Please unblock it now.\n\nLabel:"
     },
     {
       "input": "Please approve the submission by 5 p.m. today so we can meet the deadline.",
       "expected": "ACADEMIC",
-      "actual": "ACADEMIC"
+      "actual": "ACADEMIC",
+      "prompt_output": "OPERATIONS",
+      "baseline_input": "Classify the topic of this email. Return exactly ACADEMIC, OPERATIONS, or OTHER. ACADEMIC includes all messages about submissions, submission approvals, submission access, seminars, teaching, classes, research, and university administration. A submission or seminar belongs to ACADEMIC even when no paper or university is named. OPERATIONS includes all messages about software releases, release approvals, deployments, servers, service failures, and computing infrastructure. A release belongs to OPERATIONS even when software is not mentioned. OTHER includes unrelated topics such as meals, travel, shopping, and social plans. Classify by topic, regardless of urgency. Examples: \"Is the submission form ready?\" -> ACADEMIC; \"The lecture room has changed.\" -> ACADEMIC; \"The deployment needs a sign-off.\" -> OPERATIONS; \"Our server crashed.\" -> OPERATIONS; \"Shall we go hiking?\" -> OTHER.\n\nEmail:\nPlease approve the submission by 5 p.m. today so we can meet the deadline.\n\nLabel:"
     },
     {
       "input": "Here is next month's seminar schedule for your information.",
       "expected": "ACADEMIC",
-      "actual": "ACADEMIC"
+      "actual": "ACADEMIC",
+      "prompt_output": "OTHER",
+      "baseline_input": "Classify the topic of this email. Return exactly ACADEMIC, OPERATIONS, or OTHER. ACADEMIC includes all messages about submissions, submission approvals, submission access, seminars, teaching, classes, research, and university administration. A submission or seminar belongs to ACADEMIC even when no paper or university is named. OPERATIONS includes all messages about software releases, release approvals, deployments, servers, service failures, and computing infrastructure. A release belongs to OPERATIONS even when software is not mentioned. OTHER includes unrelated topics such as meals, travel, shopping, and social plans. Classify by topic, regardless of urgency. Examples: \"Is the submission form ready?\" -> ACADEMIC; \"The lecture room has changed.\" -> ACADEMIC; \"The deployment needs a sign-off.\" -> OPERATIONS; \"Our server crashed.\" -> OPERATIONS; \"Shall we go hiking?\" -> OTHER.\n\nEmail:\nHere is next month's seminar schedule for your information.\n\nLabel:"
     },
     {
       "input": "The database service is unavailable.",
       "expected": "OPERATIONS",
-      "actual": "OPERATIONS"
+      "actual": "OPERATIONS",
+      "prompt_output": "OTHER",
+      "baseline_input": "Classify the topic of this email. Return exactly ACADEMIC, OPERATIONS, or OTHER. ACADEMIC includes all messages about submissions, submission approvals, submission access, seminars, teaching, classes, research, and university administration. A submission or seminar belongs to ACADEMIC even when no paper or university is named. OPERATIONS includes all messages about software releases, release approvals, deployments, servers, service failures, and computing infrastructure. A release belongs to OPERATIONS even when software is not mentioned. OTHER includes unrelated topics such as meals, travel, shopping, and social plans. Classify by topic, regardless of urgency. Examples: \"Is the submission form ready?\" -> ACADEMIC; \"The lecture room has changed.\" -> ACADEMIC; \"The deployment needs a sign-off.\" -> OPERATIONS; \"Our server crashed.\" -> OPERATIONS; \"Shall we go hiking?\" -> OTHER.\n\nEmail:\nThe database service is unavailable.\n\nLabel:"
     },
     {
       "input": "Would you like to meet for dinner?",
       "expected": "OTHER",
-      "actual": "OTHER"
+      "actual": "OTHER",
+      "prompt_output": "OTHER",
+      "baseline_input": "Classify the topic of this email. Return exactly ACADEMIC, OPERATIONS, or OTHER. ACADEMIC includes all messages about submissions, submission approvals, submission access, seminars, teaching, classes, research, and university administration. A submission or seminar belongs to ACADEMIC even when no paper or university is named. OPERATIONS includes all messages about software releases, release approvals, deployments, servers, service failures, and computing infrastructure. A release belongs to OPERATIONS even when software is not mentioned. OTHER includes unrelated topics such as meals, travel, shopping, and social plans. Classify by topic, regardless of urgency. Examples: \"Is the submission form ready?\" -> ACADEMIC; \"The lecture room has changed.\" -> ACADEMIC; \"The deployment needs a sign-off.\" -> OPERATIONS; \"Our server crashed.\" -> OPERATIONS; \"Shall we go hiking?\" -> OTHER.\n\nEmail:\nWould you like to meet for dinner?\n\nLabel:"
     },
     {
       "input": "The submission is ready, but the team cannot send it until you grant access.",
       "expected": "ACADEMIC",
-      "actual": "ACADEMIC"
+      "actual": "ACADEMIC",
+      "prompt_output": "OTHER",
+      "baseline_input": "Classify the topic of this email. Return exactly ACADEMIC, OPERATIONS, or OTHER. ACADEMIC includes all messages about submissions, submission approvals, submission access, seminars, teaching, classes, research, and university administration. A submission or seminar belongs to ACADEMIC even when no paper or university is named. OPERATIONS includes all messages about software releases, release approvals, deployments, servers, service failures, and computing infrastructure. A release belongs to OPERATIONS even when software is not mentioned. OTHER includes unrelated topics such as meals, travel, shopping, and social plans. Classify by topic, regardless of urgency. Examples: \"Is the submission form ready?\" -> ACADEMIC; \"The lecture room has changed.\" -> ACADEMIC; \"The deployment needs a sign-off.\" -> OPERATIONS; \"Our server crashed.\" -> OPERATIONS; \"Shall we go hiking?\" -> OTHER.\n\nEmail:\nThe submission is ready, but the team cannot send it until you grant access.\n\nLabel:"
     },
     {
       "input": "Can you teach the Monday class?",
       "expected": "ACADEMIC",
-      "actual": "ACADEMIC"
+      "actual": "ACADEMIC",
+      "prompt_output": "OTHER",
+      "baseline_input": "Classify the topic of this email. Return exactly ACADEMIC, OPERATIONS, or OTHER. ACADEMIC includes all messages about submissions, submission approvals, submission access, seminars, teaching, classes, research, and university administration. A submission or seminar belongs to ACADEMIC even when no paper or university is named. OPERATIONS includes all messages about software releases, release approvals, deployments, servers, service failures, and computing infrastructure. A release belongs to OPERATIONS even when software is not mentioned. OTHER includes unrelated topics such as meals, travel, shopping, and social plans. Classify by topic, regardless of urgency. Examples: \"Is the submission form ready?\" -> ACADEMIC; \"The lecture room has changed.\" -> ACADEMIC; \"The deployment needs a sign-off.\" -> OPERATIONS; \"Our server crashed.\" -> OPERATIONS; \"Shall we go hiking?\" -> OTHER.\n\nEmail:\nCan you teach the Monday class?\n\nLabel:"
     },
     {
       "input": "Our deployment is complete.",
       "expected": "OPERATIONS",
-      "actual": "OPERATIONS"
+      "actual": "OPERATIONS",
+      "prompt_output": "OTHER",
+      "baseline_input": "Classify the topic of this email. Return exactly ACADEMIC, OPERATIONS, or OTHER. ACADEMIC includes all messages about submissions, submission approvals, submission access, seminars, teaching, classes, research, and university administration. A submission or seminar belongs to ACADEMIC even when no paper or university is named. OPERATIONS includes all messages about software releases, release approvals, deployments, servers, service failures, and computing infrastructure. A release belongs to OPERATIONS even when software is not mentioned. OTHER includes unrelated topics such as meals, travel, shopping, and social plans. Classify by topic, regardless of urgency. Examples: \"Is the submission form ready?\" -> ACADEMIC; \"The lecture room has changed.\" -> ACADEMIC; \"The deployment needs a sign-off.\" -> OPERATIONS; \"Our server crashed.\" -> OPERATIONS; \"Shall we go hiking?\" -> OTHER.\n\nEmail:\nOur deployment is complete.\n\nLabel:"
     },
     {
       "input": "What is the weather forecast?",
       "expected": "OTHER",
-      "actual": "OTHER"
+      "actual": "OTHER",
+      "prompt_output": "OTHER",
+      "baseline_input": "Classify the topic of this email. Return exactly ACADEMIC, OPERATIONS, or OTHER. ACADEMIC includes all messages about submissions, submission approvals, submission access, seminars, teaching, classes, research, and university administration. A submission or seminar belongs to ACADEMIC even when no paper or university is named. OPERATIONS includes all messages about software releases, release approvals, deployments, servers, service failures, and computing infrastructure. A release belongs to OPERATIONS even when software is not mentioned. OTHER includes unrelated topics such as meals, travel, shopping, and social plans. Classify by topic, regardless of urgency. Examples: \"Is the submission form ready?\" -> ACADEMIC; \"The lecture room has changed.\" -> ACADEMIC; \"The deployment needs a sign-off.\" -> OPERATIONS; \"Our server crashed.\" -> OPERATIONS; \"Shall we go hiking?\" -> OTHER.\n\nEmail:\nWhat is the weather forecast?\n\nLabel:"
     }
   ],
   "gallery": [
@@ -179,12 +213,16 @@
         {
           "input": "A client-side WebAssembly tool that runs entirely in your browser",
           "expected": "exact_match",
-          "actual": "exact_match"
+          "actual": "exact_match",
+          "prompt_output": "exact_match",
+          "baseline_input": "For the search query “a tool that runs in the browser”, judge how relevant the candidate description is. Return exactly exact_match, highly_relevant, somewhat_relevant, or not_relevant. A tool that executes in the browser is an exact_match. A desktop-only tool that does not run in the browser is not_relevant. Judge where the tool executes, not whether its website can be opened in a browser.\n\nCandidate description:\nA client-side WebAssembly tool that runs entirely in your browser\n\nLabel:"
         },
         {
           "input": "A desktop-only application with a website describing its features",
           "expected": "not_relevant",
-          "actual": "not_relevant"
+          "actual": "not_relevant",
+          "prompt_output": "not_relevant",
+          "baseline_input": "For the search query “a tool that runs in the browser”, judge how relevant the candidate description is. Return exactly exact_match, highly_relevant, somewhat_relevant, or not_relevant. A tool that executes in the browser is an exact_match. A desktop-only tool that does not run in the browser is not_relevant. Judge where the tool executes, not whether its website can be opened in a browser.\n\nCandidate description:\nA desktop-only application with a website describing its features\n\nLabel:"
         }
       ]
     },
@@ -195,17 +233,23 @@
         {
           "input": "I want to create a new function",
           "expected": "playground",
-          "actual": "playground"
+          "actual": "playground",
+          "prompt_output": "playground",
+          "baseline_input": "Choose where this visitor should go. Return exactly playground, docs, or none. Requests to create, compile, or try a neural function go to playground. Requests for installation instructions or an API reference go to docs. Unrelated requests go to none. Do not generate a URL.\n\nVisitor request:\nI want to create a new function\n\nLabel:"
         },
         {
           "input": "Where is the API reference?",
           "expected": "docs",
-          "actual": "docs"
+          "actual": "docs",
+          "prompt_output": "none",
+          "baseline_input": "Choose where this visitor should go. Return exactly playground, docs, or none. Requests to create, compile, or try a neural function go to playground. Requests for installation instructions or an API reference go to docs. Unrelated requests go to none. Do not generate a URL.\n\nVisitor request:\nWhere is the API reference?\n\nLabel:"
         },
         {
           "input": "What is the weather?",
           "expected": "none",
-          "actual": "none"
+          "actual": "none",
+          "prompt_output": "none",
+          "baseline_input": "Choose where this visitor should go. Return exactly playground, docs, or none. Requests to create, compile, or try a neural function go to playground. Requests for installation instructions or an API reference go to docs. Unrelated requests go to none. Do not generate a URL.\n\nVisitor request:\nWhat is the weather?\n\nLabel:"
         }
       ]
     }
@@ -292,8 +336,376 @@
       "result": "5/5"
     },
     {
-      "test": "Prompt baseline, deadline policy",
+      "test": "Prompt baseline, deadline policy on original five emails",
       "result": "4/5"
+    },
+    {
+      "test": "Prompt baseline, all deadline checks",
+      "result": "4/8"
+    },
+    {
+      "test": "Prompt baseline, routing",
+      "result": "3/9"
+    },
+    {
+      "test": "Prompt baseline, browser-tool reranking",
+      "result": "2/2"
+    },
+    {
+      "test": "Prompt baseline, website intent routing",
+      "result": "2/3"
+    },
+    {
+      "test": "Existing examples, PAW versus prompting",
+      "result": "27/27 versus 16/27"
+    },
+    {
+      "test": "Additional exploratory examples, PAW versus prompting",
+      "result": "19/20 versus 10/20"
     }
-  ]
+  ],
+  "prompt_baseline_verification": {
+    "recorded_date": "2026-11-22",
+    "timezone": "America/Toronto",
+    "completed_at_utc": "2026-11-23T04:13:00.288299+00:00",
+    "interpreter": "Qwen/Qwen3-0.6B",
+    "quantization": "Q6_K",
+    "base_model_sha256": "9a16ed5cacba959e63b62e2b6840c3eca2b51c3c3e51d31367ef8e4aafeae33c",
+    "same_base_model_file_as_all_five_paw_programs": true,
+    "lora_adapter_loaded": false,
+    "specification": "The complete unchanged function specification precedes each input.",
+    "chat_template": "<|im_start|>user\n{INPUT_PLACEHOLDER}<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+    "generation": {
+      "temperature": 0,
+      "max_tokens": null,
+      "context_tokens": 2048,
+      "sdk": "0.4.14",
+      "llama_cpp_python": "0.3.36",
+      "thinking_enabled": false,
+      "offline": true
+    },
+    "scoring": "Exact label match after stripping surrounding whitespace; capitalization is preserved.",
+    "fresh_instance_rechecks": 47,
+    "independent_llamacpp_rechecks": 22,
+    "all_rechecks_matched": true,
+    "network_connection_attempts": 0
+  },
+  "existing_comparison": {
+    "cases": 27,
+    "paw_correct": 27,
+    "prompt_correct": 16,
+    "task_scores": {
+      "urgency": {
+        "cases": 5,
+        "paw": 5,
+        "prompt": 5
+      },
+      "deadline": {
+        "cases": 8,
+        "paw": 8,
+        "prompt": 4
+      },
+      "router": {
+        "cases": 9,
+        "paw": 9,
+        "prompt": 3
+      },
+      "reranking": {
+        "cases": 2,
+        "paw": 2,
+        "prompt": 2
+      },
+      "navigation": {
+        "cases": 3,
+        "paw": 3,
+        "prompt": 2
+      }
+    },
+    "counting": "Each task-input combination is counted once. Local compilation and composition reuse these inputs."
+  },
+  "exploratory_comparison": {
+    "case_selection": "Twenty additional examples with expected labels fixed before either method was run; existing specifications and adapters were unchanged.",
+    "frozen_cases_sha256": "c7837465dffe153aa425ae56df9497c1fbd12c96e6e4d365027e00b3a3d8774f",
+    "cases": [
+      {
+        "id": "urgency-blocking-access",
+        "task": "urgency",
+        "input": "The on-call team cannot restart the service until you unlock its account. Please unlock it so recovery can continue.",
+        "expected": "URGENT",
+        "rationale": "A current service recovery is blocked on the recipient; no explicit deadline is required by the original policy.",
+        "paw_output": "URGENT",
+        "prompt_output": "URGENT",
+        "paw_correct": true,
+        "prompt_correct": true,
+        "baseline_input": "Classify whether this email needs prompt action from its recipient. Return exactly URGENT or ROUTINE. An imminent deadline or an immediate blocker is URGENT. Newsletters, completed work, and FYI updates are ROUTINE.\n\nEmail:\nThe on-call team cannot restart the service until you unlock its account. Please unlock it so recovery can continue.\n\nLabel:"
+      },
+      {
+        "id": "urgency-resolved-emergency",
+        "task": "urgency",
+        "input": "Subject: URGENT outage. The incident was fixed this morning; this message is the final report and no action is needed.",
+        "expected": "ROUTINE",
+        "rationale": "Urgent words describe completed work, with an explicit no-action statement.",
+        "paw_output": "ROUTINE",
+        "prompt_output": "URGENT",
+        "paw_correct": true,
+        "prompt_correct": false,
+        "baseline_input": "Classify whether this email needs prompt action from its recipient. Return exactly URGENT or ROUTINE. An imminent deadline or an immediate blocker is URGENT. Newsletters, completed work, and FYI updates are ROUTINE.\n\nEmail:\nSubject: URGENT outage. The incident was fixed this morning; this message is the final report and no action is needed.\n\nLabel:"
+      },
+      {
+        "id": "urgency-imminent-deadline",
+        "task": "urgency",
+        "input": "Your signature is the last item needed before the application closes in twenty minutes. Please sign it.",
+        "expected": "URGENT",
+        "rationale": "The recipient has an imminent deadline and must act.",
+        "paw_output": "URGENT",
+        "prompt_output": "URGENT",
+        "paw_correct": true,
+        "prompt_correct": true,
+        "baseline_input": "Classify whether this email needs prompt action from its recipient. Return exactly URGENT or ROUTINE. An imminent deadline or an immediate blocker is URGENT. Newsletters, completed work, and FYI updates are ROUTINE.\n\nEmail:\nYour signature is the last item needed before the application closes in twenty minutes. Please sign it.\n\nLabel:"
+      },
+      {
+        "id": "urgency-deadline-not-recipient",
+        "task": "urgency",
+        "input": "The filing deadline is this afternoon, but I have already submitted everything. This is a confirmation for your records.",
+        "expected": "ROUTINE",
+        "rationale": "The deadline is near, but the work is complete and the email is for information.",
+        "paw_output": "ROUTINE",
+        "prompt_output": "ROUTINE",
+        "paw_correct": true,
+        "prompt_correct": true,
+        "baseline_input": "Classify whether this email needs prompt action from its recipient. Return exactly URGENT or ROUTINE. An imminent deadline or an immediate blocker is URGENT. Newsletters, completed work, and FYI updates are ROUTINE.\n\nEmail:\nThe filing deadline is this afternoon, but I have already submitted everything. This is a confirmation for your records.\n\nLabel:"
+      },
+      {
+        "id": "deadline-asap-not-date",
+        "task": "deadline",
+        "input": "ASAP: our customers are waiting. Please approve the rollback immediately so the team can proceed.",
+        "expected": "ROUTINE",
+        "rationale": "ASAP and immediately do not explicitly specify a deadline today.",
+        "paw_output": "ROUTINE",
+        "prompt_output": "URGENT",
+        "paw_correct": true,
+        "prompt_correct": false,
+        "baseline_input": "Decide whether the recipient must act by an explicitly stated deadline today. Return exactly URGENT or ROUTINE. Return URGENT only if the email gives a deadline today, such as a clock time today or the end of today. Words such as now, urgently, immediately, or ASAP do not state a deadline today: return ROUTINE for those requests unless a deadline today is also stated. Blocked work without an explicit deadline today, completed work, newsletters, and FYI updates are ROUTINE.\n\nEmail:\nASAP: our customers are waiting. Please approve the rollback immediately so the team can proceed.\n\nLabel:"
+      },
+      {
+        "id": "deadline-explicit-close-today",
+        "task": "deadline",
+        "input": "Please approve the correction before close of business today.",
+        "expected": "URGENT",
+        "rationale": "Close of business today is an explicit deadline today.",
+        "paw_output": "URGENT",
+        "prompt_output": "ROUTINE",
+        "paw_correct": true,
+        "prompt_correct": false,
+        "baseline_input": "Decide whether the recipient must act by an explicitly stated deadline today. Return exactly URGENT or ROUTINE. Return URGENT only if the email gives a deadline today, such as a clock time today or the end of today. Words such as now, urgently, immediately, or ASAP do not state a deadline today: return ROUTINE for those requests unless a deadline today is also stated. Blocked work without an explicit deadline today, completed work, newsletters, and FYI updates are ROUTINE.\n\nEmail:\nPlease approve the correction before close of business today.\n\nLabel:"
+      },
+      {
+        "id": "deadline-expired-quoted-deadline",
+        "task": "deadline",
+        "input": "The earlier request said \"send it by 4 p.m. today.\" We have already sent it; no further action is required.",
+        "expected": "ROUTINE",
+        "rationale": "The only deadline is in a completed request, and the recipient does not need to act.",
+        "paw_output": "ROUTINE",
+        "prompt_output": "URGENT",
+        "paw_correct": true,
+        "prompt_correct": false,
+        "baseline_input": "Decide whether the recipient must act by an explicitly stated deadline today. Return exactly URGENT or ROUTINE. Return URGENT only if the email gives a deadline today, such as a clock time today or the end of today. Words such as now, urgently, immediately, or ASAP do not state a deadline today: return ROUTINE for those requests unless a deadline today is also stated. Blocked work without an explicit deadline today, completed work, newsletters, and FYI updates are ROUTINE.\n\nEmail:\nThe earlier request said \"send it by 4 p.m. today.\" We have already sent it; no further action is required.\n\nLabel:"
+      },
+      {
+        "id": "deadline-end-today",
+        "task": "deadline",
+        "input": "The review is not an emergency, but I need your answer by the end of today.",
+        "expected": "URGENT",
+        "rationale": "An explicit end-of-today deadline applies despite the absence of emergency wording.",
+        "paw_output": "URGENT",
+        "prompt_output": "URGENT",
+        "paw_correct": true,
+        "prompt_correct": true,
+        "baseline_input": "Decide whether the recipient must act by an explicitly stated deadline today. Return exactly URGENT or ROUTINE. Return URGENT only if the email gives a deadline today, such as a clock time today or the end of today. Words such as now, urgently, immediately, or ASAP do not state a deadline today: return ROUTINE for those requests unless a deadline today is also stated. Blocked work without an explicit deadline today, completed work, newsletters, and FYI updates are ROUTINE.\n\nEmail:\nThe review is not an emergency, but I need your answer by the end of today.\n\nLabel:"
+      },
+      {
+        "id": "router-submission-access",
+        "task": "router",
+        "input": "Please add me to the submission portal; I cannot upload the final version.",
+        "expected": "ACADEMIC",
+        "rationale": "The specification explicitly assigns submission access to ACADEMIC.",
+        "paw_output": "ACADEMIC",
+        "prompt_output": "OTHER",
+        "paw_correct": true,
+        "prompt_correct": false,
+        "baseline_input": "Classify the topic of this email. Return exactly ACADEMIC, OPERATIONS, or OTHER. ACADEMIC includes all messages about submissions, submission approvals, submission access, seminars, teaching, classes, research, and university administration. A submission or seminar belongs to ACADEMIC even when no paper or university is named. OPERATIONS includes all messages about software releases, release approvals, deployments, servers, service failures, and computing infrastructure. A release belongs to OPERATIONS even when software is not mentioned. OTHER includes unrelated topics such as meals, travel, shopping, and social plans. Classify by topic, regardless of urgency. Examples: \"Is the submission form ready?\" -> ACADEMIC; \"The lecture room has changed.\" -> ACADEMIC; \"The deployment needs a sign-off.\" -> OPERATIONS; \"Our server crashed.\" -> OPERATIONS; \"Shall we go hiking?\" -> OTHER.\n\nEmail:\nPlease add me to the submission portal; I cannot upload the final version.\n\nLabel:"
+      },
+      {
+        "id": "router-release-signoff",
+        "task": "router",
+        "input": "We have finished testing. Can you sign off on the release?",
+        "expected": "OPERATIONS",
+        "rationale": "The specification assigns releases and release approvals to OPERATIONS without requiring the word software.",
+        "paw_output": "OPERATIONS",
+        "prompt_output": "OTHER",
+        "paw_correct": true,
+        "prompt_correct": false,
+        "baseline_input": "Classify the topic of this email. Return exactly ACADEMIC, OPERATIONS, or OTHER. ACADEMIC includes all messages about submissions, submission approvals, submission access, seminars, teaching, classes, research, and university administration. A submission or seminar belongs to ACADEMIC even when no paper or university is named. OPERATIONS includes all messages about software releases, release approvals, deployments, servers, service failures, and computing infrastructure. A release belongs to OPERATIONS even when software is not mentioned. OTHER includes unrelated topics such as meals, travel, shopping, and social plans. Classify by topic, regardless of urgency. Examples: \"Is the submission form ready?\" -> ACADEMIC; \"The lecture room has changed.\" -> ACADEMIC; \"The deployment needs a sign-off.\" -> OPERATIONS; \"Our server crashed.\" -> OPERATIONS; \"Shall we go hiking?\" -> OTHER.\n\nEmail:\nWe have finished testing. Can you sign off on the release?\n\nLabel:"
+      },
+      {
+        "id": "router-seminar-information",
+        "task": "router",
+        "input": "No action needed: the seminar recording is now available.",
+        "expected": "ACADEMIC",
+        "rationale": "Seminars are ACADEMIC regardless of urgency.",
+        "paw_output": "ACADEMIC",
+        "prompt_output": "OTHER",
+        "paw_correct": true,
+        "prompt_correct": false,
+        "baseline_input": "Classify the topic of this email. Return exactly ACADEMIC, OPERATIONS, or OTHER. ACADEMIC includes all messages about submissions, submission approvals, submission access, seminars, teaching, classes, research, and university administration. A submission or seminar belongs to ACADEMIC even when no paper or university is named. OPERATIONS includes all messages about software releases, release approvals, deployments, servers, service failures, and computing infrastructure. A release belongs to OPERATIONS even when software is not mentioned. OTHER includes unrelated topics such as meals, travel, shopping, and social plans. Classify by topic, regardless of urgency. Examples: \"Is the submission form ready?\" -> ACADEMIC; \"The lecture room has changed.\" -> ACADEMIC; \"The deployment needs a sign-off.\" -> OPERATIONS; \"Our server crashed.\" -> OPERATIONS; \"Shall we go hiking?\" -> OTHER.\n\nEmail:\nNo action needed: the seminar recording is now available.\n\nLabel:"
+      },
+      {
+        "id": "router-social-pressure",
+        "task": "router",
+        "input": "Urgent: please confirm whether you are joining us for lunch before I book the table.",
+        "expected": "OTHER",
+        "rationale": "Meals and social plans are OTHER regardless of urgency.",
+        "paw_output": "OTHER",
+        "prompt_output": "OTHER",
+        "paw_correct": true,
+        "prompt_correct": true,
+        "baseline_input": "Classify the topic of this email. Return exactly ACADEMIC, OPERATIONS, or OTHER. ACADEMIC includes all messages about submissions, submission approvals, submission access, seminars, teaching, classes, research, and university administration. A submission or seminar belongs to ACADEMIC even when no paper or university is named. OPERATIONS includes all messages about software releases, release approvals, deployments, servers, service failures, and computing infrastructure. A release belongs to OPERATIONS even when software is not mentioned. OTHER includes unrelated topics such as meals, travel, shopping, and social plans. Classify by topic, regardless of urgency. Examples: \"Is the submission form ready?\" -> ACADEMIC; \"The lecture room has changed.\" -> ACADEMIC; \"The deployment needs a sign-off.\" -> OPERATIONS; \"Our server crashed.\" -> OPERATIONS; \"Shall we go hiking?\" -> OTHER.\n\nEmail:\nUrgent: please confirm whether you are joining us for lunch before I book the table.\n\nLabel:"
+      },
+      {
+        "id": "reranking-offline-browser-execution",
+        "task": "reranking",
+        "input": "A photo editor implemented in JavaScript that edits images inside your browser, even after the internet connection is turned off.",
+        "expected": "exact_match",
+        "rationale": "The described tool executes inside the browser.",
+        "paw_output": "exact_match",
+        "prompt_output": "exact_match",
+        "paw_correct": true,
+        "prompt_correct": true,
+        "baseline_input": "For the search query “a tool that runs in the browser”, judge how relevant the candidate description is. Return exactly exact_match, highly_relevant, somewhat_relevant, or not_relevant. A tool that executes in the browser is an exact_match. A desktop-only tool that does not run in the browser is not_relevant. Judge where the tool executes, not whether its website can be opened in a browser.\n\nCandidate description:\nA photo editor implemented in JavaScript that edits images inside your browser, even after the internet connection is turned off.\n\nLabel:"
+      },
+      {
+        "id": "reranking-webpage-download-confusion",
+        "task": "reranking",
+        "input": "Open our product page in any browser to download the editor. Editing requires installing and launching the Windows desktop application.",
+        "expected": "not_relevant",
+        "rationale": "A browser-accessible product page does not change desktop-only execution.",
+        "paw_output": "not_relevant",
+        "prompt_output": "not_relevant",
+        "paw_correct": true,
+        "prompt_correct": true,
+        "baseline_input": "For the search query “a tool that runs in the browser”, judge how relevant the candidate description is. Return exactly exact_match, highly_relevant, somewhat_relevant, or not_relevant. A tool that executes in the browser is an exact_match. A desktop-only tool that does not run in the browser is not_relevant. Judge where the tool executes, not whether its website can be opened in a browser.\n\nCandidate description:\nOpen our product page in any browser to download the editor. Editing requires installing and launching the Windows desktop application.\n\nLabel:"
+      },
+      {
+        "id": "reranking-no-install-browser-execution",
+        "task": "reranking",
+        "input": "A spreadsheet that performs calculations locally in a browser tab using WebAssembly, with no application installation.",
+        "expected": "exact_match",
+        "rationale": "The computational tool executes in a browser tab.",
+        "paw_output": "highly_relevant",
+        "prompt_output": "exact_match",
+        "paw_correct": false,
+        "prompt_correct": true,
+        "baseline_input": "For the search query “a tool that runs in the browser”, judge how relevant the candidate description is. Return exactly exact_match, highly_relevant, somewhat_relevant, or not_relevant. A tool that executes in the browser is an exact_match. A desktop-only tool that does not run in the browser is not_relevant. Judge where the tool executes, not whether its website can be opened in a browser.\n\nCandidate description:\nA spreadsheet that performs calculations locally in a browser tab using WebAssembly, with no application installation.\n\nLabel:"
+      },
+      {
+        "id": "reranking-desktop-embedded-help",
+        "task": "reranking",
+        "input": "A macOS-only drawing application. Its Help menu opens documentation in your default browser; drawing itself requires the installed app.",
+        "expected": "not_relevant",
+        "rationale": "The tool executes as a desktop application; opening help in a browser is irrelevant.",
+        "paw_output": "not_relevant",
+        "prompt_output": "not_relevant",
+        "paw_correct": true,
+        "prompt_correct": true,
+        "baseline_input": "For the search query “a tool that runs in the browser”, judge how relevant the candidate description is. Return exactly exact_match, highly_relevant, somewhat_relevant, or not_relevant. A tool that executes in the browser is an exact_match. A desktop-only tool that does not run in the browser is not_relevant. Judge where the tool executes, not whether its website can be opened in a browser.\n\nCandidate description:\nA macOS-only drawing application. Its Help menu opens documentation in your default browser; drawing itself requires the installed app.\n\nLabel:"
+      },
+      {
+        "id": "navigation-try-function",
+        "task": "navigation",
+        "input": "I have a description of a classifier and want to compile it into a neural function and try it on an example.",
+        "expected": "playground",
+        "rationale": "Creating, compiling, and trying a neural function map to playground.",
+        "paw_output": "playground",
+        "prompt_output": "None",
+        "paw_correct": true,
+        "prompt_correct": false,
+        "baseline_input": "Choose where this visitor should go. Return exactly playground, docs, or none. Requests to create, compile, or try a neural function go to playground. Requests for installation instructions or an API reference go to docs. Unrelated requests go to none. Do not generate a URL.\n\nVisitor request:\nI have a description of a classifier and want to compile it into a neural function and try it on an example.\n\nLabel:"
+      },
+      {
+        "id": "navigation-installation-request",
+        "task": "navigation",
+        "input": "What command should I run to install the Python package before using it?",
+        "expected": "docs",
+        "rationale": "Installation instructions map to docs.",
+        "paw_output": "docs",
+        "prompt_output": "None",
+        "paw_correct": true,
+        "prompt_correct": false,
+        "baseline_input": "Choose where this visitor should go. Return exactly playground, docs, or none. Requests to create, compile, or try a neural function go to playground. Requests for installation instructions or an API reference go to docs. Unrelated requests go to none. Do not generate a URL.\n\nVisitor request:\nWhat command should I run to install the Python package before using it?\n\nLabel:"
+      },
+      {
+        "id": "navigation-api-not-execution",
+        "task": "navigation",
+        "input": "I am not ready to compile anything; I want the API reference describing the arguments to the compile function.",
+        "expected": "docs",
+        "rationale": "The actual request is for API documentation, not execution.",
+        "paw_output": "docs",
+        "prompt_output": "none",
+        "paw_correct": true,
+        "prompt_correct": false,
+        "baseline_input": "Choose where this visitor should go. Return exactly playground, docs, or none. Requests to create, compile, or try a neural function go to playground. Requests for installation instructions or an API reference go to docs. Unrelated requests go to none. Do not generate a URL.\n\nVisitor request:\nI am not ready to compile anything; I want the API reference describing the arguments to the compile function.\n\nLabel:"
+      },
+      {
+        "id": "navigation-unrelated-computing",
+        "task": "navigation",
+        "input": "Can you help me choose a new laptop for my next trip?",
+        "expected": "none",
+        "rationale": "Buying a laptop is unrelated to neural-function creation or documentation.",
+        "paw_output": "none",
+        "prompt_output": "none",
+        "paw_correct": true,
+        "prompt_correct": true,
+        "baseline_input": "Choose where this visitor should go. Return exactly playground, docs, or none. Requests to create, compile, or try a neural function go to playground. Requests for installation instructions or an API reference go to docs. Unrelated requests go to none. Do not generate a URL.\n\nVisitor request:\nCan you help me choose a new laptop for my next trip?\n\nLabel:"
+      }
+    ],
+    "task_scores": {
+      "urgency": {
+        "cases": 4,
+        "paw": 4,
+        "prompt": 3
+      },
+      "deadline": {
+        "cases": 4,
+        "paw": 4,
+        "prompt": 1
+      },
+      "router": {
+        "cases": 4,
+        "paw": 4,
+        "prompt": 1
+      },
+      "reranking": {
+        "cases": 4,
+        "paw": 3,
+        "prompt": 4
+      },
+      "navigation": {
+        "cases": 4,
+        "paw": 4,
+        "prompt": 1
+      }
+    },
+    "paw_correct": 19,
+    "prompt_correct": 10,
+    "paw_wins": 10,
+    "prompt_wins": 1,
+    "both_correct": 9,
+    "both_wrong": 0
+  },
+  "prompt_composition": {
+    "input": "The release is waiting on your approval. Please unblock it now.",
+    "urgency": "URGENT",
+    "destination": "operations",
+    "queue": "priority"
+  }
 }

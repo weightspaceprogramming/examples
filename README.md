@@ -106,18 +106,21 @@ The prompt command supplies the policy on each call. Record the actual outputs a
 
 ## Verified results
 
-Recorded on November 22, 2026 (America/Toronto). The email tests used the [tested script](https://github.com/weightspaceprogramming/examples/blob/41fc6ee8bd980f23618dc0720924098931530b9a/paw_email_urgency.py). Hosted compilation used `paw-4b-qwen3-0.6b-20260407`; local inference used Qwen3-0.6B Q6_K, PAW SDK 0.4.14, and llama-cpp-python 0.3.36. Both compiled execution and the prompt baseline used greedy decoding with a 2,048-token context. The prompt baseline used the unadapted interpreter with thinking disabled.
+Recorded on November 22, 2026 (America/Toronto). The original email example is in the [tested script](https://github.com/weightspaceprogramming/examples/blob/41fc6ee8bd980f23618dc0720924098931530b9a/paw_email_urgency.py). Hosted compilation used `paw-4b-qwen3-0.6b-20260407`; local inference used Qwen3-0.6B Q6_K, PAW SDK 0.4.14, and llama-cpp-python 0.3.36.
 
-| Test | Correct outputs |
-| --- | --- |
-| Compiled urgency | 5/5 |
-| Compiled deadline policy | 8/8 (five emails + three additional checks) |
-| Compiled routing | 9/9 |
-| Compiled browser-tool reranking | 2/2 |
-| Compiled website intent routing | 3/3 |
-| Local compiler artifact, offline CPU inference | 5/5 |
-| Prompt baseline, original policy | 5/5 |
-| Prompt baseline, deadline policy | 4/5 |
+Both methods use the identical Qwen3-0.6B Q6_K base-model file. PAW applies a compiled LoRA adapter; prompting supplies the same complete specification in the Qwen non-thinking chat template, without an adapter. The 4B compiler runs during compilation. Both methods use greedy decoding and a 2,048-token context. Scores require the exact label after surrounding whitespace is stripped.
+
+| Existing example | PAW | Prompting |
+| --- | --- | --- |
+| Original urgency | 5/5 | 5/5 |
+| Deadline policy, original five emails | 5/5 | 4/5 |
+| Deadline policy, all eight checks | 8/8 | 4/8 |
+| Email routing | 9/9 | 3/9 |
+| Browser-tool reranking | 2/2 | 2/2 |
+| Website intent routing | 3/3 | 2/3 |
+| All 27 distinct task-input cases | 27/27 | 16/27 |
+
+The five-email deadline row is included in the eight-check row. The local compilation and composition checks reuse these inputs.
 
 ### Original urgency policy
 
@@ -143,27 +146,27 @@ PAW returned ROUTINE for “Please unblock it now.” The prompt baseline return
 
 ### Additional deadline checks
 
-| Email | Expected | PAW output |
-| --- | --- | --- |
-| Please send your comments by noon today. | URGENT | URGENT |
-| The build is broken. Fix it immediately. | ROUTINE | ROUTINE |
-| Approve the budget by 9 a.m. tomorrow. | ROUTINE | ROUTINE |
+| Email | Expected | PAW output | Prompt output |
+| --- | --- | --- | --- |
+| Please send your comments by noon today. | URGENT | URGENT | ROUTINE |
+| The build is broken. Fix it immediately. | ROUTINE | ROUTINE | URGENT |
+| Approve the budget by 9 a.m. tomorrow. | ROUTINE | ROUTINE | URGENT |
 
 ### Routing outputs
 
-| Email | Expected | PAW output |
-| --- | --- | --- |
-| The release is waiting on your approval. Please unblock it now. | OPERATIONS | OPERATIONS |
-| Please approve the submission by 5 p.m. today so we can meet the deadline. | ACADEMIC | ACADEMIC |
-| Here is next month's seminar schedule for your information. | ACADEMIC | ACADEMIC |
-| The database service is unavailable. | OPERATIONS | OPERATIONS |
-| Would you like to meet for dinner? | OTHER | OTHER |
-| The submission is ready, but the team cannot send it until you grant access. | ACADEMIC | ACADEMIC |
-| Can you teach the Monday class? | ACADEMIC | ACADEMIC |
-| Our deployment is complete. | OPERATIONS | OPERATIONS |
-| What is the weather forecast? | OTHER | OTHER |
+| Email | Expected | PAW output | Prompt output |
+| --- | --- | --- | --- |
+| The release is waiting on your approval. Please unblock it now. | OPERATIONS | OPERATIONS | OPERATIONS |
+| Please approve the submission by 5 p.m. today so we can meet the deadline. | ACADEMIC | ACADEMIC | OPERATIONS |
+| Here is next month's seminar schedule for your information. | ACADEMIC | ACADEMIC | OTHER |
+| The database service is unavailable. | OPERATIONS | OPERATIONS | OTHER |
+| Would you like to meet for dinner? | OTHER | OTHER | OTHER |
+| The submission is ready, but the team cannot send it until you grant access. | ACADEMIC | ACADEMIC | OTHER |
+| Can you teach the Monday class? | ACADEMIC | ACADEMIC | OTHER |
+| Our deployment is complete. | OPERATIONS | OPERATIONS | OTHER |
+| What is the weather forecast? | OTHER | OTHER | OTHER |
 
-Combining the original urgency function and router on the release-approval email produced:
+Combining the original urgency function and router on the release-approval email produced the same result with PAW and prompting:
 
 ```json
 {
@@ -176,19 +179,78 @@ Combining the original urgency function and router on the release-approval email
 
 ### Additional functions
 
-| Function | Input | Expected | PAW output |
+| Function | Input | Expected | PAW output | Prompt output |
+| --- | --- | --- | --- | --- |
+| Browser-tool reranking | A client-side WebAssembly tool that runs entirely in your browser | exact_match | exact_match | exact_match |
+| Browser-tool reranking | A desktop-only application with a website describing its features | not_relevant | not_relevant | not_relevant |
+| Website intent routing | I want to create a new function | playground | playground | playground |
+| Website intent routing | Where is the API reference? | docs | docs | none |
+| Website intent routing | What is the weather? | none | none | none |
+
+### Twenty additional exploratory examples
+
+These twenty examples had their expected labels fixed before execution. The specifications and compiled programs were unchanged. PAW returned 19/20 correct labels; prompting returned 10/20. PAW was correct and prompting wrong on ten cases; prompting was correct and PAW wrong on one. Both were correct on nine.
+
+For example, PAW classified a resolved outage marked “URGENT” as ROUTINE, routed a seminar recording to ACADEMIC, and sent an installation question to docs. Prompting returned URGENT, OTHER, and None respectively. On a spreadsheet that executes in a browser tab, PAW returned highly_relevant instead of exact_match; prompting returned exact_match.
+
+| Task | PAW | Prompting |
+| --- | --- | --- |
+| Original urgency | 4/4 | 3/4 |
+| Deadline policy | 4/4 | 1/4 |
+| Email routing | 4/4 | 1/4 |
+| Browser-tool reranking | 3/4 | 4/4 |
+| Website intent routing | 4/4 | 1/4 |
+
+#### Original urgency
+
+| Input | Expected | PAW output | Prompt output |
 | --- | --- | --- | --- |
-| Browser-tool reranking | A client-side WebAssembly tool that runs entirely in your browser | exact_match | exact_match |
-| Browser-tool reranking | A desktop-only application with a website describing its features | not_relevant | not_relevant |
-| Website intent routing | I want to create a new function | playground | playground |
-| Website intent routing | Where is the API reference? | docs | docs |
-| Website intent routing | What is the weather? | none | none |
+| The on-call team cannot restart the service until you unlock its account. Please unlock it so recovery can continue. | URGENT | URGENT | URGENT |
+| Subject: URGENT outage. The incident was fixed this morning; this message is the final report and no action is needed. | ROUTINE | ROUTINE | URGENT |
+| Your signature is the last item needed before the application closes in twenty minutes. Please sign it. | URGENT | URGENT | URGENT |
+| The filing deadline is this afternoon, but I have already submitted everything. This is a confirmation for your records. | ROUTINE | ROUTINE | ROUTINE |
+
+#### Deadline policy
+
+| Input | Expected | PAW output | Prompt output |
+| --- | --- | --- | --- |
+| ASAP: our customers are waiting. Please approve the rollback immediately so the team can proceed. | ROUTINE | ROUTINE | URGENT |
+| Please approve the correction before close of business today. | URGENT | URGENT | ROUTINE |
+| The earlier request said "send it by 4 p.m. today." We have already sent it; no further action is required. | ROUTINE | ROUTINE | URGENT |
+| The review is not an emergency, but I need your answer by the end of today. | URGENT | URGENT | URGENT |
+
+#### Email routing
+
+| Input | Expected | PAW output | Prompt output |
+| --- | --- | --- | --- |
+| Please add me to the submission portal; I cannot upload the final version. | ACADEMIC | ACADEMIC | OTHER |
+| We have finished testing. Can you sign off on the release? | OPERATIONS | OPERATIONS | OTHER |
+| No action needed: the seminar recording is now available. | ACADEMIC | ACADEMIC | OTHER |
+| Urgent: please confirm whether you are joining us for lunch before I book the table. | OTHER | OTHER | OTHER |
+
+#### Browser-tool reranking
+
+| Input | Expected | PAW output | Prompt output |
+| --- | --- | --- | --- |
+| A photo editor implemented in JavaScript that edits images inside your browser, even after the internet connection is turned off. | exact_match | exact_match | exact_match |
+| Open our product page in any browser to download the editor. Editing requires installing and launching the Windows desktop application. | not_relevant | not_relevant | not_relevant |
+| A spreadsheet that performs calculations locally in a browser tab using WebAssembly, with no application installation. | exact_match | highly_relevant | exact_match |
+| A macOS-only drawing application. Its Help menu opens documentation in your default browser; drawing itself requires the installed app. | not_relevant | not_relevant | not_relevant |
+
+#### Website intent routing
+
+| Input | Expected | PAW output | Prompt output |
+| --- | --- | --- | --- |
+| I have a description of a classifier and want to compile it into a neural function and try it on an example. | playground | playground | None |
+| What command should I run to install the Python package before using it? | docs | docs | None |
+| I am not ready to compile anything; I want the API reference describing the arguments to the compile function. | docs | docs | none |
+| Can you help me choose a new laptop for my next trip? | none | none | none |
 
 ### Local compilation and offline execution
 
 The local Standard compiler ran on an NVIDIA RTX 6000 Ada in 39.0 seconds, with 7.6 GiB peak GPU memory. Its saved artifact returned the same five outputs as the original-policy PAW column above during offline CPU inference: 5/5. That run used PAW SDK 0.4.14 and llama-cpp-python 0.3.34.
 
-Saved JSON loading, .paw download and loading, and composition worked. Seven offline configurations ran with Python network connections blocked and recorded zero connection attempts. The deadline prompt baseline retained its one incorrect label in the offline run. All 11 validation and download regression tests passed.
+Saved JSON loading, .paw download and loading, and composition worked. Seven offline configurations ran with Python network connections blocked and recorded zero connection attempts. The original five-email deadline comparison retained its one incorrect prompt-baseline label in the offline run. All 11 validation and download regression tests passed.
 
 Run the two comparisons:
 
@@ -198,6 +260,14 @@ python paw_email_urgency.py prompt
 python paw_email_urgency.py run deadline-program.json
 python paw_email_urgency.py prompt --policy deadline
 ```
+
+Run every paired example from the results file (27 existing cases and 20 exploratory cases):
+
+```sh
+python compare_paw_prompt.py --output comparison-results.json
+```
+
+After the program assets have been downloaded, add `--offline` to run from the local cache. The output records each expected label and both actual outputs; incorrect predictions are retained. All 47 prompting outputs were checked again in fresh model instances. Independent llama.cpp completion reproduced all 22 cases where the two methods returned different outputs.
 
 [Download the full results, specifications, and program IDs](verified-results.json).
 
