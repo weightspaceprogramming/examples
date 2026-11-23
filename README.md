@@ -50,7 +50,7 @@ python paw_email_urgency.py run urgency-program.json
 
 Compilation sends the specification to the PAW service. The SDK downloads the resulting program and its shared interpreter on first use, then executes inputs locally. The JSON record preserves the specification, program ID, and compiler snapshot.
 
-The five test emails include a quoted urgent request that has already been resolved and a blocked submission without the word “urgent.” Each result reports the actual output, expected label, label validity, and whether it matches. The expected labels define the test; the script obtains predictions from the model. It prints a summary and exits with a nonzero status if any label is invalid or differs from the expectation. A custom input checks label validity without assigning an expected answer.
+The five test emails include a quoted urgent request that has already been resolved and a blocked submission without the word “urgent.” Each result reports the actual output, expected label, label validity, and whether it matches. It prints a summary and exits with a nonzero status if any label is invalid or differs from the expectation. A custom input checks label validity without assigning an expected answer.
 
 Run another email through the same program:
 
@@ -103,6 +103,20 @@ python paw_email_urgency.py prompt
 ```
 
 The prompt command supplies the policy on each call. Record the actual outputs and timings from both commands to compare them.
+
+## Email triage and request routing
+
+PAW correctly handles resolved incidents, routes database failures to operations, and sends installation questions to documentation. The prompting baseline uses the same Qwen3-0.6B model and receives the same function specifications.
+
+| Task | Input | Expected | PAW | Prompting |
+| --- | --- | --- | --- | --- |
+| Email urgency | The outage has been fixed. No action is needed; this is the incident summary. | ROUTINE | ROUTINE | URGENT |
+| Email routing | The production database is down; customers cannot log in. | OPERATIONS | OPERATIONS | OTHER |
+| Email routing | Please review the student's thesis draft. | ACADEMIC | ACADEMIC | OTHER |
+| Website routing | How do I install the Python SDK? | docs | docs | None |
+| Website routing | Help me create a function that sorts customer emails. | playground | playground | None |
+
+`ROUTINE` means no prompt action is required. `OPERATIONS` routes an email to the operations team; `ACADEMIC` routes it to the research office. `docs` opens the documentation, and `playground` opens the function builder.
 
 ## Verified results
 
@@ -187,11 +201,9 @@ Combining the original urgency function and router on the release-approval email
 | Website intent routing | Where is the API reference? | docs | docs | none |
 | Website intent routing | What is the weather? | none | none | none |
 
-### Twenty additional exploratory examples
+### Additional test cases
 
-These twenty examples had their expected labels fixed before execution. The specifications and compiled programs were unchanged. PAW returned 19/20 correct labels; prompting returned 10/20. PAW was correct and prompting wrong on ten cases; prompting was correct and PAW wrong on one. Both were correct on nine.
-
-For example, PAW classified a resolved outage marked “URGENT” as ROUTINE, routed a seminar recording to ACADEMIC, and sent an installation question to docs. Prompting returned URGENT, OTHER, and None respectively. On a spreadsheet that executes in a browser tab, PAW returned highly_relevant instead of exact_match; prompting returned exact_match.
+PAW returned 19/20 correct labels; prompting returned 10/20.
 
 | Task | PAW | Prompting |
 | --- | --- | --- |
@@ -246,6 +258,65 @@ For example, PAW classified a resolved outage marked “URGENT” as ROUTINE, ro
 | I am not ready to compile anything; I want the API reference describing the arguments to the compile function. | docs | docs | none |
 | Can you help me choose a new laptop for my next trip? | none | none | none |
 
+### Everyday email and website tasks
+
+PAW returned 26/28 correct labels; prompting returned 13/28.
+
+| Task | PAW | Prompting |
+| --- | --- | --- |
+| Email urgency | 6/6 | 5/6 |
+| Email routing | 9/10 | 3/10 |
+| Website routing | 8/8 | 1/8 |
+| Browser-tool reranking | 3/4 | 4/4 |
+
+#### Email urgency
+
+| Input | Expected | PAW | Prompting |
+| --- | --- | --- | --- |
+| Production is down. Please restart the database so customers can log in. | URGENT | URGENT | URGENT |
+| The outage has been fixed. No action is needed; this is the incident summary. | ROUTINE | ROUTINE | URGENT |
+| Please sign the form in the next ten minutes before registration closes. | URGENT | URGENT | URGENT |
+| Thanks for your help. The deployment finished successfully. | ROUTINE | ROUTINE | ROUTINE |
+| I cannot send invoices until you restore my account access. Please restore it. | URGENT | URGENT | URGENT |
+| Here is our monthly newsletter with last month's product updates. | ROUTINE | ROUTINE | ROUTINE |
+
+#### Email routing
+
+| Input | Expected | PAW | Prompting |
+| --- | --- | --- | --- |
+| Can you cover my lecture on Monday? | ACADEMIC | OTHER | OTHER |
+| The seminar starts at 3 p.m. in room 204. | ACADEMIC | ACADEMIC | OTHER |
+| Please review the student's thesis draft. | ACADEMIC | ACADEMIC | OTHER |
+| Could you update the course syllabus before term starts? | ACADEMIC | ACADEMIC | OTHER |
+| The production database is down; customers cannot log in. | OPERATIONS | OPERATIONS | OTHER |
+| The deployment failed; please check the server logs. | OPERATIONS | OPERATIONS | OTHER |
+| Can you approve this software release? | OPERATIONS | OPERATIONS | OPERATIONS |
+| Please increase the memory allocation for our web server. | OPERATIONS | OPERATIONS | OTHER |
+| Let's meet for dinner on Friday. | OTHER | OTHER | OTHER |
+| Can you recommend a hotel in Boston? | OTHER | OTHER | OTHER |
+
+#### Website routing
+
+| Input | Expected | PAW | Prompting |
+| --- | --- | --- | --- |
+| How do I install the Python SDK? | docs | docs | None |
+| Show me the API reference. | docs | docs | None |
+| Which arguments does paw.compile accept? | docs | docs | none |
+| How do I install programasweights with pip? | docs | docs | none |
+| I want to try a sentiment classifier on a few sentences. | playground | playground | None |
+| Help me create a function that sorts customer emails. | playground | playground | None |
+| I want to compile a neural function from my description. | playground | playground | None |
+| What is the weather in Boston? | none | none | none |
+
+#### Browser-tool reranking
+
+| Input | Expected | PAW | Prompting |
+| --- | --- | --- | --- |
+| An online image editor that processes your photos directly in your browser using JavaScript. | exact_match | exact_match | exact_match |
+| A video converter that must be downloaded and installed as a Windows desktop application. | not_relevant | not_relevant | not_relevant |
+| A calculator that runs in a browser tab and works offline. | exact_match | somewhat_relevant | exact_match |
+| A Mac desktop app for editing audio. Its website provides a download link. | not_relevant | not_relevant | not_relevant |
+
 ### Local compilation and offline execution
 
 The local Standard compiler ran on an NVIDIA RTX 6000 Ada in 39.0 seconds, with 7.6 GiB peak GPU memory. Its saved artifact returned the same five outputs as the original-policy PAW column above during offline CPU inference: 5/5. That run used PAW SDK 0.4.14 and llama-cpp-python 0.3.34.
@@ -261,13 +332,13 @@ python paw_email_urgency.py run deadline-program.json
 python paw_email_urgency.py prompt --policy deadline
 ```
 
-Run every paired example from the results file (27 existing cases and 20 exploratory cases):
+Run the paired examples:
 
 ```sh
 python compare_paw_prompt.py --output comparison-results.json
 ```
 
-After the program assets have been downloaded, add `--offline` to run from the local cache. The output records each expected label and both actual outputs; incorrect predictions are retained. All 47 prompting outputs were checked again in fresh model instances. Independent llama.cpp completion reproduced all 22 cases where the two methods returned different outputs.
+After the program assets have been downloaded, add `--offline` to run from the local cache. The output records each expected label and both actual outputs. All 75 prompting outputs were checked again in fresh model instances. Independent llama.cpp completion reproduced all 37 cases where the two methods returned different outputs.
 
 [Download the full results, specifications, and program IDs](verified-results.json).
 

@@ -22,13 +22,16 @@ def load_cases(data, selection):
     if selection in ('all', 'exploratory'):
         for row in data['exploratory_comparison']['cases']:
             cases.append({'set': 'exploratory', **{key: row[key] for key in ('id', 'task', 'input', 'expected')}})
+    if selection in ('all', 'everyday'):
+        for row in data['everyday_comparison']['cases']:
+            cases.append({'set': 'everyday', **{key: row[key] for key in ('id', 'task', 'input', 'expected')}})
     return cases
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--cases', type=Path, default=Path(__file__).with_name('verified-results.json'))
-    parser.add_argument('--set', choices=('all', 'existing', 'exploratory'), default='all')
+    parser.add_argument('--set', choices=('all', 'existing', 'exploratory', 'everyday'), default='all')
     parser.add_argument('--offline', action='store_true', help='Use previously downloaded model and adapter assets')
     parser.add_argument('--output', type=Path, required=True, help='New JSON output file; existing files are preserved')
     args = parser.parse_args()
