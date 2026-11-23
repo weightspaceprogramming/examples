@@ -1,0 +1,299 @@
+{
+  "schema_version": 1,
+  "recorded_date": "2026-11-22",
+  "timezone": "America/Toronto",
+  "verified_at_utc": "2026-11-23T03:57:31.220268+00:00",
+  "example_source_commit": "41fc6ee8bd980f23618dc0720924098931530b9a",
+  "compiler": "paw-4b-qwen3-0.6b",
+  "compiler_snapshot": "paw-4b-qwen3-0.6b-20260407",
+  "interpreter": "Qwen/Qwen3-0.6B",
+  "quantization": "Q6_K",
+  "sdk_version": "0.4.14",
+  "llama_cpp_python_version": "0.3.36",
+  "generation": {
+    "temperature": 0,
+    "context_tokens": 2048,
+    "explicit_output_token_limit": null,
+    "prompt_baseline_thinking": false
+  },
+  "programs": {
+    "urgency": {
+      "program_id": "224359803d6f6f105b65",
+      "specification": "Classify whether this email needs prompt action from its recipient. Return exactly URGENT or ROUTINE. An imminent deadline or an immediate blocker is URGENT. Newsletters, completed work, and FYI updates are ROUTINE.",
+      "compiler_snapshot": "paw-4b-qwen3-0.6b-20260407"
+    },
+    "deadline": {
+      "program_id": "e1b6085e03a6f28cbfbf",
+      "specification": "Decide whether the recipient must act by an explicitly stated deadline today. Return exactly URGENT or ROUTINE. Return URGENT only if the email gives a deadline today, such as a clock time today or the end of today. Words such as now, urgently, immediately, or ASAP do not state a deadline today: return ROUTINE for those requests unless a deadline today is also stated. Blocked work without an explicit deadline today, completed work, newsletters, and FYI updates are ROUTINE.",
+      "compiler_snapshot": "paw-4b-qwen3-0.6b-20260407"
+    },
+    "router": {
+      "program_id": "9044697498d2074af5d4",
+      "specification": "Classify the topic of this email. Return exactly ACADEMIC, OPERATIONS, or OTHER. ACADEMIC includes all messages about submissions, submission approvals, submission access, seminars, teaching, classes, research, and university administration. A submission or seminar belongs to ACADEMIC even when no paper or university is named. OPERATIONS includes all messages about software releases, release approvals, deployments, servers, service failures, and computing infrastructure. A release belongs to OPERATIONS even when software is not mentioned. OTHER includes unrelated topics such as meals, travel, shopping, and social plans. Classify by topic, regardless of urgency. Examples: \"Is the submission form ready?\" -> ACADEMIC; \"The lecture room has changed.\" -> ACADEMIC; \"The deployment needs a sign-off.\" -> OPERATIONS; \"Our server crashed.\" -> OPERATIONS; \"Shall we go hiking?\" -> OTHER.",
+      "compiler_snapshot": "paw-4b-qwen3-0.6b-20260407"
+    },
+    "reranking": {
+      "program_id": "72084307970e588b235a",
+      "specification": "For the search query “a tool that runs in the browser”, judge how relevant the candidate description is. Return exactly exact_match, highly_relevant, somewhat_relevant, or not_relevant. A tool that executes in the browser is an exact_match. A desktop-only tool that does not run in the browser is not_relevant. Judge where the tool executes, not whether its website can be opened in a browser.",
+      "compiler_snapshot": "paw-4b-qwen3-0.6b-20260407"
+    },
+    "navigation": {
+      "program_id": "d0afd8946d3e6db0787c",
+      "specification": "Choose where this visitor should go. Return exactly playground, docs, or none. Requests to create, compile, or try a neural function go to playground. Requests for installation instructions or an API reference go to docs. Unrelated requests go to none. Do not generate a URL.",
+      "compiler_snapshot": "paw-4b-qwen3-0.6b-20260407"
+    }
+  },
+  "original_policy": [
+    {
+      "input": "Please approve the submission by 5 p.m. today so we can meet the deadline.",
+      "expected": "URGENT",
+      "paw_output": "URGENT",
+      "prompt_output": "URGENT"
+    },
+    {
+      "input": "Here is next month's seminar schedule for your information.",
+      "expected": "ROUTINE",
+      "paw_output": "ROUTINE",
+      "prompt_output": "ROUTINE"
+    },
+    {
+      "input": "The release is waiting on your approval. Please unblock it now.",
+      "expected": "URGENT",
+      "paw_output": "URGENT",
+      "prompt_output": "URGENT"
+    },
+    {
+      "input": "Forwarding the earlier ‘URGENT: signature needed’ email for the record. This was resolved yesterday.",
+      "expected": "ROUTINE",
+      "paw_output": "ROUTINE",
+      "prompt_output": "ROUTINE"
+    },
+    {
+      "input": "The submission is ready, but the team cannot send it until you grant access.",
+      "expected": "URGENT",
+      "paw_output": "URGENT",
+      "prompt_output": "URGENT"
+    }
+  ],
+  "deadline_policy": [
+    {
+      "input": "Please approve the submission by 5 p.m. today so we can meet the deadline.",
+      "expected": "URGENT",
+      "paw_output": "URGENT",
+      "prompt_output": "URGENT"
+    },
+    {
+      "input": "Here is next month's seminar schedule for your information.",
+      "expected": "ROUTINE",
+      "paw_output": "ROUTINE",
+      "prompt_output": "ROUTINE"
+    },
+    {
+      "input": "The release is waiting on your approval. Please unblock it now.",
+      "expected": "ROUTINE",
+      "paw_output": "ROUTINE",
+      "prompt_output": "URGENT"
+    },
+    {
+      "input": "Forwarding the earlier ‘URGENT: signature needed’ email for the record. This was resolved yesterday.",
+      "expected": "ROUTINE",
+      "paw_output": "ROUTINE",
+      "prompt_output": "ROUTINE"
+    },
+    {
+      "input": "The submission is ready, but the team cannot send it until you grant access.",
+      "expected": "ROUTINE",
+      "paw_output": "ROUTINE",
+      "prompt_output": "ROUTINE"
+    }
+  ],
+  "additional_deadline_checks": [
+    {
+      "input": "Please send your comments by noon today.",
+      "expected": "URGENT",
+      "actual": "URGENT"
+    },
+    {
+      "input": "The build is broken. Fix it immediately.",
+      "expected": "ROUTINE",
+      "actual": "ROUTINE"
+    },
+    {
+      "input": "Approve the budget by 9 a.m. tomorrow.",
+      "expected": "ROUTINE",
+      "actual": "ROUTINE"
+    }
+  ],
+  "routing": [
+    {
+      "input": "The release is waiting on your approval. Please unblock it now.",
+      "expected": "OPERATIONS",
+      "actual": "OPERATIONS"
+    },
+    {
+      "input": "Please approve the submission by 5 p.m. today so we can meet the deadline.",
+      "expected": "ACADEMIC",
+      "actual": "ACADEMIC"
+    },
+    {
+      "input": "Here is next month's seminar schedule for your information.",
+      "expected": "ACADEMIC",
+      "actual": "ACADEMIC"
+    },
+    {
+      "input": "The database service is unavailable.",
+      "expected": "OPERATIONS",
+      "actual": "OPERATIONS"
+    },
+    {
+      "input": "Would you like to meet for dinner?",
+      "expected": "OTHER",
+      "actual": "OTHER"
+    },
+    {
+      "input": "The submission is ready, but the team cannot send it until you grant access.",
+      "expected": "ACADEMIC",
+      "actual": "ACADEMIC"
+    },
+    {
+      "input": "Can you teach the Monday class?",
+      "expected": "ACADEMIC",
+      "actual": "ACADEMIC"
+    },
+    {
+      "input": "Our deployment is complete.",
+      "expected": "OPERATIONS",
+      "actual": "OPERATIONS"
+    },
+    {
+      "input": "What is the weather forecast?",
+      "expected": "OTHER",
+      "actual": "OTHER"
+    }
+  ],
+  "gallery": [
+    {
+      "name": "reranking",
+      "program_id": "72084307970e588b235a",
+      "results": [
+        {
+          "input": "A client-side WebAssembly tool that runs entirely in your browser",
+          "expected": "exact_match",
+          "actual": "exact_match"
+        },
+        {
+          "input": "A desktop-only application with a website describing its features",
+          "expected": "not_relevant",
+          "actual": "not_relevant"
+        }
+      ]
+    },
+    {
+      "name": "navigation",
+      "program_id": "d0afd8946d3e6db0787c",
+      "results": [
+        {
+          "input": "I want to create a new function",
+          "expected": "playground",
+          "actual": "playground"
+        },
+        {
+          "input": "Where is the API reference?",
+          "expected": "docs",
+          "actual": "docs"
+        },
+        {
+          "input": "What is the weather?",
+          "expected": "none",
+          "actual": "none"
+        }
+      ]
+    }
+  ],
+  "composition": {
+    "input": "The release is waiting on your approval. Please unblock it now.",
+    "urgency": "URGENT",
+    "destination": "operations",
+    "queue": "priority"
+  },
+  "local_compiler": {
+    "source_commit": "13f144537fde0a58e6d9161ec876dc6470280960",
+    "gpu": "NVIDIA RTX 6000 Ada Generation",
+    "compile_seconds": 39.0,
+    "peak_gpu_gib": 7.6,
+    "artifact_sha256": "db53d46e6c872d3f915220ee04dcbca80afcb8ff33d6e31381902d66c25d2770",
+    "sdk_version": "0.4.14",
+    "llama_cpp_python_version": "0.3.34",
+    "inference_device": "CPU",
+    "offline": true,
+    "results": [
+      {
+        "input": "Please approve the submission by 5 p.m. today so we can meet the deadline.",
+        "expected": "URGENT",
+        "actual": "URGENT"
+      },
+      {
+        "input": "Here is next month's seminar schedule for your information.",
+        "expected": "ROUTINE",
+        "actual": "ROUTINE"
+      },
+      {
+        "input": "The release is waiting on your approval. Please unblock it now.",
+        "expected": "URGENT",
+        "actual": "URGENT"
+      },
+      {
+        "input": "Forwarding the earlier ‘URGENT: signature needed’ email for the record. This was resolved yesterday.",
+        "expected": "ROUTINE",
+        "actual": "ROUTINE"
+      },
+      {
+        "input": "The submission is ready, but the team cannot send it until you grant access.",
+        "expected": "URGENT",
+        "actual": "URGENT"
+      }
+    ]
+  },
+  "runtime_checks": {
+    "saved_json_reload": true,
+    "paw_download_and_reload": true,
+    "composition": true,
+    "offline_configurations": 7,
+    "python_network_connection_attempts": 0,
+    "regression_tests_passed": 11
+  },
+  "scores": [
+    {
+      "test": "Compiled urgency",
+      "result": "5/5"
+    },
+    {
+      "test": "Compiled deadline policy",
+      "result": "8/8 (five emails + three additional checks)"
+    },
+    {
+      "test": "Compiled routing",
+      "result": "9/9"
+    },
+    {
+      "test": "Compiled browser-tool reranking",
+      "result": "2/2"
+    },
+    {
+      "test": "Compiled website intent routing",
+      "result": "3/3"
+    },
+    {
+      "test": "Local compiler artifact, offline CPU inference",
+      "result": "5/5"
+    },
+    {
+      "test": "Prompt baseline, original policy",
+      "result": "5/5"
+    },
+    {
+      "test": "Prompt baseline, deadline policy",
+      "result": "4/5"
+    }
+  ]
+}

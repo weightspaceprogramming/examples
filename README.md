@@ -104,6 +104,103 @@ python paw_email_urgency.py prompt
 
 The prompt command supplies the policy on each call. Record the actual outputs and timings from both commands to compare them.
 
+## Verified results
+
+Recorded on November 22, 2026 (America/Toronto). The email tests used the [tested script](https://github.com/weightspaceprogramming/examples/blob/41fc6ee8bd980f23618dc0720924098931530b9a/paw_email_urgency.py). Hosted compilation used `paw-4b-qwen3-0.6b-20260407`; local inference used Qwen3-0.6B Q6_K, PAW SDK 0.4.14, and llama-cpp-python 0.3.36. Both compiled execution and the prompt baseline used greedy decoding with a 2,048-token context. The prompt baseline used the unadapted interpreter with thinking disabled.
+
+| Test | Correct outputs |
+| --- | --- |
+| Compiled urgency | 5/5 |
+| Compiled deadline policy | 8/8 (five emails + three additional checks) |
+| Compiled routing | 9/9 |
+| Compiled browser-tool reranking | 2/2 |
+| Compiled website intent routing | 3/3 |
+| Local compiler artifact, offline CPU inference | 5/5 |
+| Prompt baseline, original policy | 5/5 |
+| Prompt baseline, deadline policy | 4/5 |
+
+### Original urgency policy
+
+| Email | Expected | PAW output | Prompt output |
+| --- | --- | --- | --- |
+| Please approve the submission by 5 p.m. today so we can meet the deadline. | URGENT | URGENT | URGENT |
+| Here is next month's seminar schedule for your information. | ROUTINE | ROUTINE | ROUTINE |
+| The release is waiting on your approval. Please unblock it now. | URGENT | URGENT | URGENT |
+| Forwarding the earlier ‘URGENT: signature needed’ email for the record. This was resolved yesterday. | ROUTINE | ROUTINE | ROUTINE |
+| The submission is ready, but the team cannot send it until you grant access. | URGENT | URGENT | URGENT |
+
+### Deadline-only policy
+
+| Email | Expected | PAW output | Prompt output |
+| --- | --- | --- | --- |
+| Please approve the submission by 5 p.m. today so we can meet the deadline. | URGENT | URGENT | URGENT |
+| Here is next month's seminar schedule for your information. | ROUTINE | ROUTINE | ROUTINE |
+| The release is waiting on your approval. Please unblock it now. | ROUTINE | ROUTINE | URGENT |
+| Forwarding the earlier ‘URGENT: signature needed’ email for the record. This was resolved yesterday. | ROUTINE | ROUTINE | ROUTINE |
+| The submission is ready, but the team cannot send it until you grant access. | ROUTINE | ROUTINE | ROUTINE |
+
+PAW returned ROUTINE for “Please unblock it now.” The prompt baseline returned URGENT. “Now” does not specify a deadline today, so the baseline scored 4/5 and the test command exited with status 1.
+
+### Additional deadline checks
+
+| Email | Expected | PAW output |
+| --- | --- | --- |
+| Please send your comments by noon today. | URGENT | URGENT |
+| The build is broken. Fix it immediately. | ROUTINE | ROUTINE |
+| Approve the budget by 9 a.m. tomorrow. | ROUTINE | ROUTINE |
+
+### Routing outputs
+
+| Email | Expected | PAW output |
+| --- | --- | --- |
+| The release is waiting on your approval. Please unblock it now. | OPERATIONS | OPERATIONS |
+| Please approve the submission by 5 p.m. today so we can meet the deadline. | ACADEMIC | ACADEMIC |
+| Here is next month's seminar schedule for your information. | ACADEMIC | ACADEMIC |
+| The database service is unavailable. | OPERATIONS | OPERATIONS |
+| Would you like to meet for dinner? | OTHER | OTHER |
+| The submission is ready, but the team cannot send it until you grant access. | ACADEMIC | ACADEMIC |
+| Can you teach the Monday class? | ACADEMIC | ACADEMIC |
+| Our deployment is complete. | OPERATIONS | OPERATIONS |
+| What is the weather forecast? | OTHER | OTHER |
+
+Combining the original urgency function and router on the release-approval email produced:
+
+```json
+{
+  "input": "The release is waiting on your approval. Please unblock it now.",
+  "urgency": "URGENT",
+  "destination": "operations",
+  "queue": "priority"
+}
+```
+
+### Additional functions
+
+| Function | Input | Expected | PAW output |
+| --- | --- | --- | --- |
+| Browser-tool reranking | A client-side WebAssembly tool that runs entirely in your browser | exact_match | exact_match |
+| Browser-tool reranking | A desktop-only application with a website describing its features | not_relevant | not_relevant |
+| Website intent routing | I want to create a new function | playground | playground |
+| Website intent routing | Where is the API reference? | docs | docs |
+| Website intent routing | What is the weather? | none | none |
+
+### Local compilation and offline execution
+
+The local Standard compiler ran on an NVIDIA RTX 6000 Ada in 39.0 seconds, with 7.6 GiB peak GPU memory. Its saved artifact returned the same five outputs as the original-policy PAW column above during offline CPU inference: 5/5. That run used PAW SDK 0.4.14 and llama-cpp-python 0.3.34.
+
+Saved JSON loading, .paw download and loading, and composition worked. Seven offline configurations ran with Python network connections blocked and recorded zero connection attempts. The deadline prompt baseline retained its one incorrect label in the offline run. All 11 validation and download regression tests passed.
+
+Run the two comparisons:
+
+```sh
+python paw_email_urgency.py run urgency-program.json
+python paw_email_urgency.py prompt
+python paw_email_urgency.py run deadline-program.json
+python paw_email_urgency.py prompt --policy deadline
+```
+
+[Download the full results, specifications, and program IDs](verified-results.json).
+
 ## Contributing an example
 
 Include the source, installation commands, representative inputs, expected behavior, and the command that checks the result. Link the original paper and implementation. For model-generated outputs, report the model or compiler version and keep predictions separate from expected answers.
